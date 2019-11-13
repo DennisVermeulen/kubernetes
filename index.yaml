@@ -1,0 +1,23 @@
+releases:
+  - name: keycloak
+    namespace: devops
+    # https://github.com/kubernetes/charts/tree/master/stable/keycloak
+    chart: stable/keycloak
+    values:
+      - keycloak:
+          ingress:
+            enabled: true
+            path: /auth
+            hosts:
+              - keycloak.{{ requiredEnv "DEVOPS_DOMAIN" }}
+          persistence:
+            deployPostgres: false
+            dbVendor: POSTGRES
+            dbHost: {{ requiredEnv "DEVOPS_POSTGRES_HOST" }}
+            dbUser: keycloak
+            dbPassword: keycloak
+          resources:
+            limits:
+              memory: 512Mi
+            requests:
+              memory: 512Mi
