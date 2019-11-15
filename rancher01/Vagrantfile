@@ -1,0 +1,35 @@
+  config.vm.box = "centos/7"
+  config.vm.hostname = "rancher01"
+
+Vagrant.configure("3") do |config|
+  config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 22, host: 2222, host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 433, host: 4433, host_ip: "127.0.0.1"
+end
+
+   config.vm.network "private_network", ip: "192.168.33.10"
+
+     vb.memory = "4096"
+   end
+
+   config.vm.provision "shell", inline: <<-SHELL
+     yum update -y
+     yum install -y yum-utils device-mapper-persistent-data lvm2
+     yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+     yum install -y docker-ce-18.09.9-3.el7
+     systemctl start docker && systemctl enable docker
+     yum -y install ntp
+     systemctl start ntpd
+     systemctl enable ntpd
+     timedatectl set-timezone Europe/Amsterdam
+     echo 10.0.2.11  rancher01 rancher.thuis.nl     jenkins.thuis.nl >> /etc/hosts
+     echo 10.0.2.12  rancher02 >> /etc/hosts
+     rm -rf /etc/resolv.conf
+     echo nameserver 8.8.8.8 >> /etc/resolv.conf
+     echo nameserver 8.8.4.4 >> /etc/resolv.conf
+     cd /usr/local/bin/
+     curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+     chmod +x kubectl
+     mkdir /root/.kube/ 
+   SHELL
+end
