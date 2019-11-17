@@ -1,8 +1,7 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "centos/7"
-  config.vm.hostname = "rancher01"
-
-   config.vm.network "private_network", ip: "192.168.33.10"
+  config.vm.hostname = "rancher02"
+   config.vm.network "private_network", ip: "192.168.33.11"
    config.vm.provider "virtualbox" do |vb|
      vb.memory = "4096"
    end
@@ -13,21 +12,14 @@ Vagrant.configure("2") do |config|
      yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
      yum install -y docker-ce-18.09.9-3.el7
      systemctl start docker && systemctl enable docker
-     yum -y install ntp git
+     yum -y install ntp
      systemctl start ntpd
      systemctl enable ntpd
      timedatectl set-timezone Europe/Amsterdam
-     echo 192.168.33.10 rancher01 rancher.thuis.nl wordpress.thuis.nl jenkins.thuis.nl >> /etc/hosts
-     echo 192.168.33.11 rancher02 >> /etc/hosts
+     echo 192.168.33.10  rancher01 rancher.thuis.nl wordpress.rancher.nl jenkins.thuis.nl >> /etc/hosts
+     echo 192.168.33.11  rancher02 >> /etc/hosts
      rm -rf /etc/resolv.conf
      echo nameserver 8.8.8.8 >> /etc/resolv.conf
      echo nameserver 8.8.4.4 >> /etc/resolv.conf
-     cd /usr/local/bin/
-     curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
-     chmod +x kubectl
-     mkdir /root/.kube/
-     mkdir /opt/rancher 
-     cd /root
-     git clone https://dennisvermeulen@bitbucket.org/dennisvermeulen/jenkins_master.git
    SHELL
 end
